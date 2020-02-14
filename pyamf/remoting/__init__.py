@@ -541,11 +541,32 @@ def _write_body(name, message, stream, encoder, strict=False):
     stream.write_ushort(len(response))
     stream.write_utf8_string(response)
 
-    if not strict:
+    if strict is False:
         stream.write_ulong(0)
         _encode_body(message)
-
         return
+
+    if type(strict) is dict:
+        strict_type = strict.keys()[0]
+        strict_value = strict[strict_type]
+
+        if strict_type == 'ulong':
+            stream.write_ulong(strict_value)
+
+        if strict_type == 'long':
+            stream.write_long(strict_value)
+
+        if strict_type == 'short':
+            stream.write_short(strict_value)
+
+        if strict_type == 'ushort':
+            stream.write_ushort(strict_value)
+
+        if strict_type == 'uchar':
+            stream.write_uchar(strict_value)
+
+        if strict_type == 'utf8':
+            stream.write_utf8_string(strict_value)
 
     write_pos = stream.tell()
     stream.write_ulong(0)
